@@ -1,0 +1,202 @@
+<!doctype html>
+
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx" crossorigin="anonymous"></script>
+  <script>
+    
+  </script>
+  <style>
+      
+    th{ 
+        color:#fff;
+            }
+</style>
+
+</head>
+
+<body>
+    <div id="nav-placeholder">
+
+    </div>
+    
+    <script>
+        $(function(){
+          $("#nav-placeholder").load("nav.html");
+        });
+    </script>
+
+<div class="my-5" style="max-width: 1000px; max-height:1259px;">
+    <canvas id="myChart" ></canvas>
+</div>
+
+<br>
+
+<div class = "row">
+    <div class = "col">
+        <div class = "card card body">
+            <input id = "search-input" class="form-control" type="text">
+        </div>
+    </div>
+</div>
+
+
+<table class="table table-striped">
+    <tr  class="bg-info">
+        <th>Datum</th>
+        <th>Temperatuur</th>
+        <th>Vochtigheid</th>
+        <th>Vermogen</th>
+    </tr>
+
+    <tbody id="myTable">
+        
+    </tbody>
+</table>
+
+<script>
+
+//setInterval(getData,30000);
+getData();
+
+let vdata = [];
+let tdata = [];
+let date = [];
+let vvermogen = [];
+//let tabeldata = [];
+
+async function getData(){
+
+    const response = await fetch('/chartinfo');
+    const ftdata = await response.json();
+    //tabeldata.push(ftdata);
+
+    for (let index = 0; index < ftdata.length; index++) {
+        vdata.push(ftdata[index].vochtigheid);
+        tdata.push(ftdata[index].temperatuur);
+        vvermogen.push(ftdata[index].vermogen);
+        date.push(ftdata[index].date);
+        
+    }
+
+    chartTek();
+
+    //setInterval(BuildTabel(ftdata),30000);
+    buildTabel(ftdata);
+    console.log(ftdata);
+}
+
+//chartTek();
+//buildTabel(ftdata);
+
+//var fftdata = [ftdata];
+//buildTabel(ftdata);
+
+function chartTek(){
+const ctx = document.getElementById('myChart').getContext('2d');
+//const xlabels =   ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'July', 'July', 'July' , 'July' , 'July' , 'July' , 'July' , 'July' , 'July' ,'July' ,'July' ,'July','July','July','July','July','July','July','July','July','July','July','July','July','July','July','July','July','July','July','July','July','July','July','July','July','July','July','July'];
+
+const chart = new Chart(ctx, {
+    // The type of chart we want to create
+    type: 'line',
+
+    // The data for our dataset
+    data: {
+        labels: date,
+        datasets: [
+            {
+                label: 'Temperatuur',
+                borderColor: 'rgb(255, 0, 0)',
+                fill: false,
+                lineTension: 0,
+                data: tdata
+            },
+			{
+				label: 'vochtigheid',
+				borderColor: 'rgb(0, 0, 255)',
+				fill: false,
+				lineTension: 0,
+				data: vdata,
+            },
+            {
+                label: 'vermogen',
+                borderColor: 'rgb(0, 255, 0)',
+                fill: false,
+                lineTension: 0,
+                data: vvermogen,
+            }
+			]
+        }
+
+
+    ,
+
+    // Configuration options go here
+    options: {
+
+        /*
+        scales: {
+            yAxes: [{
+                stacked: true
+            }]
+        },*/
+        title: {
+            display: true,
+            text: 'Temperatuur, vochtigheid en vermogen'
+        }
+    }
+});
+}
+
+    /*
+    $('#search-input').on('keyup',function(){
+
+
+        var value = $(this).val()
+        console.log('value', value)
+        var data = searchTabel(value, tabeldata)
+        buildTabel(data)
+    })
+
+    buildTabel(tabeldata);
+    
+    function searchTabel(value, data){
+
+        var filterredData = []
+
+        for (var i = 0; i < data.length;i++){
+            var name = data[i].date
+            if(date.includes(value)){
+                filterredData.push(data[i])
+            }
+
+        }
+        
+        return filterredData
+    }
+    */
+
+	function buildTabel(data){
+		var table = document.getElementById('myTable')
+
+        //table.innerHTML = ''
+		for (var i = 0; i < data.length; i++){
+			var row = `<tr>
+							<td>${data[i].date}</td>
+							<td>${data[i].temperatuur}</td>
+                            <td>${data[i].vochtigheid}</td>
+                            <td>${data[i].vermogen}</td>
+					  </tr>`
+			table.innerHTML += row
+
+		}
+	}
+
+</script>
+
+</body>
+</html>
