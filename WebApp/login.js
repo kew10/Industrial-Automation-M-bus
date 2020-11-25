@@ -17,6 +17,7 @@ var connection = mysql.createPool({
 
 
 var app = express();
+const port = process.env.PORT || 8000;
 
 app.use(express.static('public'));
 
@@ -271,5 +272,5 @@ function fetchData(response){
 */
 
 
-app.listen(8000);
-console.log("Server running at http://127.0.0.1:8000/");
+app.listen(port);
+console.log("Server running at port 8000");
